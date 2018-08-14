@@ -6,6 +6,12 @@ use PHPUnit\Framework\TestCase;
 
 class BCSTest extends TestCase
 {
+    public function testGetResult()
+    {
+        $result = BCS::create(1.5, ['scale' => 2])->add(1.2)->mul(2)->sub(1.5)->getResult();
+        $this->assertEquals(3.9, $result);
+    }
+
     public function testIsEqual()
     {
         $result = BCS::create(1.2, ['scale' => 0])->isEqual(1.6);
