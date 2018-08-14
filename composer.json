@@ -1,0 +1,23 @@
+{
+  "name": "kriss/bcmath",
+  "description": "PHP bcmath quick write.",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "kriss",
+      "email": "462679766@qq.com"
+    }
+  ],
+  "scripts": {
+    "fix": "php-cs-fixer fix --config .php_cs"
+  },
+  "autoload": {
+    "psr-4": {
+      "kriss\\bcmath\\": "src"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6.5"
+  }
+}

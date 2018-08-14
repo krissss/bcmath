@@ -1,0 +1,15 @@
+/vendor
+
+composer.phar
+
+phpunit.phar
+/phpunit.xml
+
+.DS_Store
+Thumbs.db
+/.idea
+/.vscode
+
+.php_cs.cache
+
+yii
