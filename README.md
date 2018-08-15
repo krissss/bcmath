@@ -2,6 +2,12 @@
 
 PHP bcmath quick write.
 
+# Install
+
+```
+composer require kriss/bcmath -vvv
+```
+
 ## Usage
 
 ```php
