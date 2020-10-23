@@ -26,7 +26,7 @@ class BCParser extends BaseBC
             '[\+\-]', // 加法、减法
         ];
         $operand = '(?:(?<=[^0-9\.,]|^)[+-])?[0-9\.,]+';
-        $opScale = $this->operateScale;
+        $opScale = $this->config['operateScale'];
         while (preg_match('/\(([^\)\(]+)\)/', $formula, $singleFormula)) {
             foreach ($operations as $operation) {
                 while (preg_match("/({$operand})({$operation})({$operand})/", $singleFormula[1], $matches)) {

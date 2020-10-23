@@ -22,11 +22,7 @@ class BC extends BaseBC
         if (!isset($arguments[0])) {
             return 0;
         }
-        $bcs = BCS::create($arguments[0], [
-            'scale' => $this->scale,
-            'rounded' => $this->rounded,
-            'operateScale' => $this->operateScale,
-        ]);
+        $bcs = BCS::create($arguments[0], $this->config);
         unset($arguments[0]);
         /** @var BCS $bcs */
         $bcs = $bcs->$name(...$arguments);

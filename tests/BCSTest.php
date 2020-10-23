@@ -1,6 +1,5 @@
 <?php
 
-
 use kriss\bcmath\BCS;
 use PHPUnit\Framework\TestCase;
 
@@ -8,8 +7,25 @@ class BCSTest extends TestCase
 {
     public function testGetResult()
     {
+        // 默认四舍五入
         $result = BCS::create(1.5, ['scale' => 2])->add(1.2)->mul(2)->sub(1.5)->getResult();
         $this->assertEquals(3.9, $result);
+
+        // 四舍五入
+        $result = BCS::create(1.35, ['scale' => 2, 'round' => true])->add(1.2)->mul(1.35)->getResult();
+        $this->assertEquals(3.44, $result);
+
+        // 向上保留
+        $result = BCS::create(1.35, ['scale' => 2, 'ceil' => true])->add(1.2)->mul(1.35)->getResult();
+        $this->assertEquals(3.45, $result);
+
+        // 舍位
+        $result = BCS::create(1.35, ['scale' => 2, 'floor' => true])->add(1.2)->mul(1.35)->add(0.002)->getResult();
+        $this->assertEquals(3.44, $result);
+
+        // 操作过程中精度保留
+        $result = BCS::create(1.352, ['scale' => 2, 'operateScale' => 2])->add(0.014)->add(0.005)->getResult();
+        $this->assertEquals(1.36, $result);
     }
 
     public function testIsEqual()
@@ -53,7 +69,7 @@ class BCSTest extends TestCase
         $result = BCS::create(1.2, ['scale' => 2])->mul(2.37, 3.84, 8.4)->getResult();
         $this->assertEquals(91.74, $result);
 
-        $result = BCS::create(1.2, ['scale' => 4, 'rounded' => false])->mul(2.37, 3.84, 8.4)->getResult();
+        $result = BCS::create(1.2, ['scale' => 4, 'floor' => true])->mul(2.37, 3.84, 8.4)->getResult();
         $this->assertEquals(91.7360, $result);
     }
 

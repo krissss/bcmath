@@ -21,8 +21,11 @@ class BCSummary extends BaseBC
      */
     public function average($total, $proportions)
     {
-        $sum = BC::create(['scale' => $this->operateScale])->add(...array_values($proportions));
-        if (BCS::create($sum, ['scale' => $this->operateScale])->isEqual(0)) {
+        // 操作过程中的替换精度为操作精度
+        $operateConfig = array_merge($this->config, ['scale' => $this->config['operateScale']]);
+
+        $sum = BC::create($operateConfig)->add(...array_values($proportions));
+        if (BCS::create($sum, $operateConfig)->isEqual(0)) {
             return array_map(function () {
                 return 0;
             }, $proportions);
@@ -31,10 +34,10 @@ class BCSummary extends BaseBC
         $lastOne = array_slice($proportions, count($proportions) - 1, 1, true);
         array_pop($proportions);
         foreach ($proportions as $index => $proportion) {
-            $result[$index] = BCS::create($proportion, ['scale' => $this->scale])->div($sum)->mul($total)->getResult();
+            $result[$index] = BCS::create($proportion, $this->config)->div($sum)->mul($total)->getResult();
         }
-        $sumBefore = BC::create(['scale' => $this->scale])->add(...array_values($result));
-        $result[key($lastOne)] = BCS::create($total, ['scale' => $this->scale, 'rounded' => $this->rounded])->sub($sumBefore)->getResult();
+        $sumBefore = BC::create($this->config)->add(...array_values($result));
+        $result[key($lastOne)] = BCS::create($total, $this->config)->sub($sumBefore)->getResult();
         return $result;
     }
 
@@ -47,9 +50,12 @@ class BCSummary extends BaseBC
      */
     public function upgrade($old, $new, $multi = 1)
     {
-        if (BCS::create($old, ['scale' => $this->operateScale])->isEqual(0)) {
-            return BCS::create($new, ['scale' => $this->operateScale])->isEqual(0) ? 0 : 1;
+        // 操作过程中的替换精度为操作精度
+        $operateConfig = array_merge($this->config, ['scale' => $this->config['operateScale']]);
+
+        if (BCS::create($old, $operateConfig)->isEqual(0)) {
+            return BCS::create($new, $this->config)->isEqual(0) ? 0 : 1;
         }
-        return BCS::create($new, ['scale' => $this->scale])->sub($old)->div($old)->mul($multi)->getResult();
+        return BCS::create($new, $this->config)->sub($old)->div($old)->mul($multi)->getResult();
     }
 }
