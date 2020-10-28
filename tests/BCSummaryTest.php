@@ -9,6 +9,9 @@ class BCSummaryTest extends TestCase
 
     public function testAverage()
     {
+        // 小数
+        $result = BCSummary::create(['scale' => 3])->average(18.8, [2.2, 2.2, 4.4]);
+        $this->assertEquals([4.7, 4.7, 9.4], $result);
         // 简单
         $result = BCSummary::create(['scale' => 2])->average(100, [2, 3]);
         $this->assertEquals([40, 60], $result);
@@ -50,7 +53,7 @@ class BCSummaryTest extends TestCase
         $this->assertEquals([1.1, 2.2, 3.4], $result);
 
         // 保留一位，最后多余的使用舍去法
-        $result = BCSummary::create(['scale' => 1, 'rounded' => false])->average(6.66, [1.5, 3, 4.5]);
+        $result = BCSummary::create(['scale' => 1, 'floor' => true])->average(6.66, [1.5, 3, 4.5]);
         $this->assertEquals([1.1, 2.2, 3.3], $result);
 
         // 总数为 0

@@ -51,7 +51,7 @@ class BCS extends BaseBC
             if ($bcName === 'bcmod') {
                 $this->result = call_user_func($bcName, $this->result, $number);
             } else {
-                $this->result = call_user_func($bcName, $this->result, $number, $this->operateScale);
+                $this->result = call_user_func($bcName, $this->result, $number, $this->config['operateScale']);
             }
         }
         return $this;
@@ -72,7 +72,7 @@ class BCS extends BaseBC
      */
     public function getSqrt()
     {
-        return bcsqrt($this->result, $this->scale);
+        return bcsqrt($this->result, $this->config['scale']);
     }
 
     /**
@@ -82,7 +82,7 @@ class BCS extends BaseBC
      */
     public function compare($number)
     {
-        return bccomp($this->result, $number, $this->scale);
+        return bccomp($this->result, $number, $this->config['scale']);
     }
 
     /**
