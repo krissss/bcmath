@@ -23,6 +23,10 @@ class BCSTest extends TestCase
         $result = BCS::create(1.35, ['scale' => 2, 'floor' => true])->add(1.2)->mul(1.35)->add(0.002)->getResult();
         $this->assertEquals(3.44, $result);
 
+        // 舍位，末位为9的情况
+        $result = BCS::create(3765, ['scale' => 2, 'floor' => true])->mul(1.37833459)->getResult();
+        $this->assertEquals(5189.42, $result);
+
         // 操作过程中精度保留
         $result = BCS::create(1.352, ['scale' => 2, 'operateScale' => 2])->add(0.014)->add(0.005)->getResult();
         $this->assertEquals(1.36, $result);

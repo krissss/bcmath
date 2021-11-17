@@ -32,17 +32,28 @@ abstract class BaseBC
     public function getScaleNumber($number)
     {
         $scale = $this->config['scale'];
+        $operateScale = $this->config['operateScale'];
+
         if ($this->config['round']) {
             return round($number, $scale);
         }
-        if ($this->config['ceil']) {
-            $ratio = pow(10, $scale);
-            $number = ceil(bcmul($number, $ratio, $this->config['operateScale']));
-            return bcdiv($number, $ratio, $scale);
-        }
-        if ($this->config['floor']) {
-            $scale += 1;
-            return substr(sprintf("%.{$scale}f", $number), 0, -1);
+        if ($this->config['ceil'] || $this->config['floor']) {
+            // 通过截取字符串的形式处理而非先乘再除，是因为先乘会出现超过 operateScale 最大精度的情况
+            $arr = explode('.', $number);
+            $integer = $arr[0];
+            if (count($arr) !== 2) {
+                return $integer;
+            }
+            $decimal = $arr[1];
+            $decimalUsed = substr($decimal, 0, $scale);
+            $decimalLeft = substr($decimal, $scale);
+            $value = $integer . '.' . $decimalUsed;
+            if ($this->config['floor'] || !$decimalLeft || bccomp($decimalLeft, 0, $operateScale) === 0) {
+                // 位数恰好或是舍位
+                return $value;
+            }
+            // 需要进位
+            return bcadd($value, bcpow(0.1, $scale, $operateScale), $operateScale);
         }
 
         return $number;

@@ -8,7 +8,7 @@ namespace kriss\bcmath;
  * @method BCS mul(...$numbers)
  * @method BCS div(...$numbers)
  * @method BCS mod(...$numbers)
- * @method BCS pow(...$numbers)
+ * @method BCS pow(...$numbers) 只支持指数为整数的，若传入小数会自动 intval
  */
 class BCS extends BaseBC
 {
@@ -48,6 +48,9 @@ class BCS extends BaseBC
             throw new \Exception("{$bcName} not in ::bcEnables");
         }
         foreach ($arguments as $number) {
+            if ($bcName === 'bcpow') {
+                $number = intval($number);
+            }
             if ($bcName === 'bcmod') {
                 $this->result = call_user_func($bcName, $this->result, $number);
             } else {
