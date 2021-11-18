@@ -19,6 +19,10 @@ class BCSTest extends TestCase
         $result = BCS::create(1.35, ['scale' => 2, 'ceil' => true])->add(1.2)->mul(1.35)->getResult();
         $this->assertEquals(3.45, $result);
 
+        // 向上保留，精度为0
+        $result = BCS::create(82.5, ['scale' => 0, 'ceil' => true])->getResult();
+        $this->assertEquals(83, $result);
+
         // 向上保留，精度为2，尾数多0的情况
         $result = BCS::create(10.0000, ['scale' => 2, 'ceil' => true])->getResult();
         $this->assertEquals(10, $result);
@@ -32,6 +36,10 @@ class BCSTest extends TestCase
         // 舍位，末位为9的情况
         $result = BCS::create(10.0198, ['scale' => 2, 'floor' => true])->getResult();
         $this->assertEquals(10.01, $result);
+
+        // 舍位，精度为0
+        $result = BCS::create(82.5, ['scale' => 0, 'floor' => true])->getResult();
+        $this->assertEquals(82, $result);
 
         // 操作过程中精度保留
         $result = BCS::create(1.352, ['scale' => 2, 'operateScale' => 2])->add(0.014)->add(0.005)->getResult();

@@ -42,21 +42,35 @@ abstract class BaseBC
             $arr = explode('.', $number);
             $integer = $arr[0];
             if (count($arr) !== 2) {
+                // 非小数
                 return $integer;
             }
             $decimal = $arr[1];
-            $decimalUsed = substr($decimal, 0, $scale);
-            $decimalLeft = substr($decimal, $scale);
+
+            $decimalUsed = 0; // 需要使用的小数值
+            $decimalLeft = $decimal; // 截断后剩余的小数值
+            if ($scale > 0) {
+                $decimalUsed = substr($decimal, 0, $scale);
+                $decimalLeft = substr($decimal, $scale);
+            }
+
             if (bccomp($decimalUsed, 0, $operateScale) === 0 && bccomp($decimalLeft, 0, $operateScale) === 0) {
+                // 小数位数值均为 0 时
                 return $integer;
             }
-            $value = $integer . '.' . $decimalUsed;
-            if ($this->config['floor'] || !$decimalLeft || bccomp($decimalLeft, 0, $operateScale) === 0) {
-                // 位数恰好或是舍位
-                return $value;
+
+            $result = $integer;
+            if (bccomp($decimalUsed, 0, $operateScale) === 1) {
+                $result = $integer . '.' . $decimalUsed;
             }
+
+            if ($this->config['floor'] || bccomp($decimalLeft, 0, $operateScale) === 0) {
+                // 舍位 或 位数恰好
+                return $result;
+            }
+
             // 需要进位
-            return bcadd($value, bcpow(0.1, $scale, $operateScale), $operateScale);
+            return bcadd($result, bcpow(0.1, $scale, $operateScale), $scale);
         }
 
         return $number;
