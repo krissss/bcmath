@@ -47,6 +47,9 @@ abstract class BaseBC
             $decimal = $arr[1];
             $decimalUsed = substr($decimal, 0, $scale);
             $decimalLeft = substr($decimal, $scale);
+            if (bccomp($decimalUsed, 0, $operateScale) === 0 && bccomp($decimalLeft, 0, $operateScale) === 0) {
+                return $integer;
+            }
             $value = $integer . '.' . $decimalUsed;
             if ($this->config['floor'] || !$decimalLeft || bccomp($decimalLeft, 0, $operateScale) === 0) {
                 // 位数恰好或是舍位
