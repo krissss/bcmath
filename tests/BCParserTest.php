@@ -22,8 +22,8 @@ test('parse', function () {
     // 取模
     $result = BCParser::create(['scale' => 2])->parse('10%3');
     expect($result)->toEqual(1);
-
-    // 不允许的操作符
-    $result = BCParser::create(['scale' => 2])->parse('12x3');
-    expect($result)->toEqual(12);
 });
+test('not support operation', function () {
+    // 不允许的操作符
+    BCParser::create(['scale' => 2])->parse('12x3');
+})->throws(Exception::class, 'formula error');

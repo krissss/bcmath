@@ -32,22 +32,22 @@ class BCParser extends BaseBC
                 while (preg_match("/({$operand})({$operation})({$operand})/", $singleFormula[1], $matches)) {
                     switch ($matches[2]) {
                         case '+':
-                            $result = bcadd($matches[1], $matches[3], $opScale);
+                            $result = BC::create(['scale' => $opScale])->add($matches[1], $matches[3]);
                             break;
                         case '-':
-                            $result = bcsub($matches[1], $matches[3], $opScale);
+                            $result = BC::create(['scale' => $opScale])->sub($matches[1], $matches[3]);
                             break;
                         case '*':
-                            $result = bcmul($matches[1], $matches[3], $opScale);
+                            $result = BC::create(['scale' => $opScale])->mul($matches[1], $matches[3]);
                             break;
                         case '/':
-                            $result = bcdiv($matches[1], $matches[3], $opScale);
+                            $result = BC::create(['scale' => $opScale])->div($matches[1], $matches[3]);
                             break;
                         case '%':
-                            $result = bcmod($matches[1], $matches[3]);
+                            $result = BC::create(['scale' => $opScale])->mod($matches[1], $matches[3]);
                             break;
                         case '^':
-                            $result = bcpow($matches[1], $matches[3], $opScale);
+                            $result = BC::create(['scale' => $opScale])->pow($matches[1], $matches[3]);
                             break;
                         default:
                             $result = 0;
@@ -57,6 +57,10 @@ class BCParser extends BaseBC
             }
             $formula = str_replace($singleFormula[0], $singleFormula[1], $formula);
         }
+        if (!is_numeric($formula)) {
+            throw new \Exception('formula error');
+        }
+
         return $this->getScaleNumber($formula);
     }
 }
