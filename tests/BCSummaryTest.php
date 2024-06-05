@@ -54,6 +54,10 @@ test('average', function () {
     // 总数为 0
     $result = BCSummary::create(['scale' => 2])->average(0, [1, 2]);
     expect($result)->toEqual([0, 0]);
+
+    // 平分为 0
+    $result = BCSummary::create(['scale' => 2])->average(100, [0, 0]);
+    expect($result)->toEqual([0, 0]);
 });
 
 test('upgrade', function () {

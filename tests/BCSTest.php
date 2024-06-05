@@ -115,3 +115,13 @@ test('is less than', function () {
     $result = BCS::create(1.2, ['scale' => 2])->isLessThan(1.6);
     expect($result)->toEqual(true);
 });
+test('not exist bc method', function () {
+    BCS::create(1)->xyz(0);
+})->throws(Exception::class, 'xyz not in ::bcEnables');
+test('change config in invalid', function () {
+    $bcs = BCS::create(1.2222, ['scale' => 2]);
+    $bcs->config['round'] = false;
+
+    $result = $bcs->add(0.2255)->getResult();
+    expect($result)->toEqual(1.4477);
+});

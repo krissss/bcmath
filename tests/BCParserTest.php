@@ -18,4 +18,12 @@ test('parse', function () {
     // 当其中某个变量未设置时
     $result = BCParser::create(['scale' => 2])->parse('{a}* {b}+{c}', ['a' => '1.2', 'b' => '1.3']);
     expect($result)->toEqual(1.56);
+
+    // 取模
+    $result = BCParser::create(['scale' => 2])->parse('10%3');
+    expect($result)->toEqual(1);
+
+    // 不允许的操作符
+    $result = BCParser::create(['scale' => 2])->parse('12x3');
+    expect($result)->toEqual(12);
 });

@@ -30,3 +30,7 @@ test('mul', function () {
     $result = BC::create(['scale' => 6])->mul(1.2, 1.3, 1.1);
     expect($result)->toEqual(1.716);
 });
+test('no value', function () {
+    $result = BC::create(['scale' => 6])->add();
+    expect($result)->toEqual(0);
+});
