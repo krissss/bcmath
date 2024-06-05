@@ -7,8 +7,7 @@ on:
   pull_request:
     types:
       - opened
-    branches:
-      - main
+      - reopened
 
 jobs:
   phpunit:
