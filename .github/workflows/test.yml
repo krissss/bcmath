@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - 4-迁移-pest增加-github-actions
   pull_request:
     branches:
       - main
