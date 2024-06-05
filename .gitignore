@@ -3,7 +3,7 @@
 composer.phar
 
 phpunit.phar
-/phpunit.xml
+.phpunit.result.cache
 
 .DS_Store
 Thumbs.db
@@ -12,4 +12,4 @@ Thumbs.db
 
 .php_cs.cache
 
-yii
+composer.lock

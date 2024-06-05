@@ -1,145 +1,117 @@
 <?php
 
 use kriss\bcmath\BCS;
-use PHPUnit\Framework\TestCase;
+test('get result', function () {
+    // 默认四舍五入
+    $result = BCS::create(1.5, ['scale' => 2])->add(1.2)->mul(2)->sub(1.5)->getResult();
+    expect($result)->toEqual(3.9);
 
-class BCSTest extends TestCase
-{
-    public function testGetResult()
-    {
-        // 默认四舍五入
-        $result = BCS::create(1.5, ['scale' => 2])->add(1.2)->mul(2)->sub(1.5)->getResult();
-        $this->assertEquals(3.9, $result);
+    // 四舍五入
+    $result = BCS::create(1.35, ['scale' => 2, 'round' => true])->add(1.2)->mul(1.35)->getResult();
+    expect($result)->toEqual(3.44);
 
-        // 四舍五入
-        $result = BCS::create(1.35, ['scale' => 2, 'round' => true])->add(1.2)->mul(1.35)->getResult();
-        $this->assertEquals(3.44, $result);
+    // 向上保留
+    $result = BCS::create(1.35, ['scale' => 2, 'ceil' => true])->add(1.2)->mul(1.35)->getResult();
+    expect($result)->toEqual(3.45);
 
-        // 向上保留
-        $result = BCS::create(1.35, ['scale' => 2, 'ceil' => true])->add(1.2)->mul(1.35)->getResult();
-        $this->assertEquals(3.45, $result);
+    // 向上保留，精度为0
+    $result = BCS::create(82.5, ['scale' => 0, 'ceil' => true])->getResult();
+    expect($result)->toEqual(83);
 
-        // 向上保留，精度为0
-        $result = BCS::create(82.5, ['scale' => 0, 'ceil' => true])->getResult();
-        $this->assertEquals(83, $result);
+    // 向上保留，精度为2，尾数多0的情况
+    $result = BCS::create(10.0000, ['scale' => 2, 'ceil' => true])->getResult();
+    expect($result)->toEqual(10);
+    $result = BCS::create(10.0001, ['scale' => 2, 'ceil' => true])->getResult();
+    expect($result)->toEqual(10.01);
 
-        // 向上保留，精度为2，尾数多0的情况
-        $result = BCS::create(10.0000, ['scale' => 2, 'ceil' => true])->getResult();
-        $this->assertEquals(10, $result);
-        $result = BCS::create(10.0001, ['scale' => 2, 'ceil' => true])->getResult();
-        $this->assertEquals(10.01, $result);
+    // 舍位
+    $result = BCS::create(1.35, ['scale' => 2, 'floor' => true])->add(1.2)->mul(1.35)->add(0.002)->getResult();
+    expect($result)->toEqual(3.44);
 
-        // 舍位
-        $result = BCS::create(1.35, ['scale' => 2, 'floor' => true])->add(1.2)->mul(1.35)->add(0.002)->getResult();
-        $this->assertEquals(3.44, $result);
+    // 舍位，末位为9的情况
+    $result = BCS::create(10.0198, ['scale' => 2, 'floor' => true])->getResult();
+    expect($result)->toEqual(10.01);
 
-        // 舍位，末位为9的情况
-        $result = BCS::create(10.0198, ['scale' => 2, 'floor' => true])->getResult();
-        $this->assertEquals(10.01, $result);
+    // 舍位，精度为0
+    $result = BCS::create(82.5, ['scale' => 0, 'floor' => true])->getResult();
+    expect($result)->toEqual(82);
 
-        // 舍位，精度为0
-        $result = BCS::create(82.5, ['scale' => 0, 'floor' => true])->getResult();
-        $this->assertEquals(82, $result);
+    // 操作过程中精度保留
+    $result = BCS::create(1.352, ['scale' => 2, 'operateScale' => 2])->add(0.014)->add(0.005)->getResult();
+    expect($result)->toEqual(1.36);
+});
+test('is equal', function () {
+    $result = BCS::create(1.2, ['scale' => 0])->isEqual(1.6);
+    expect($result)->toEqual(true);
 
-        // 操作过程中精度保留
-        $result = BCS::create(1.352, ['scale' => 2, 'operateScale' => 2])->add(0.014)->add(0.005)->getResult();
-        $this->assertEquals(1.36, $result);
-    }
+    $result = BCS::create(1.2, ['scale' => 2])->isEqual(1.6);
+    expect($result)->toEqual(false);
 
-    public function testIsEqual()
-    {
-        $result = BCS::create(1.2, ['scale' => 0])->isEqual(1.6);
-        $this->assertEquals(true, $result);
+    $result = BCS::create(1.6, ['scale' => 2])->isEqual(1.6);
+    expect($result)->toEqual(true);
+});
+test('is larger than', function () {
+    $result = BCS::create(1.2, ['scale' => 0])->isLargerThan(1.6);
+    expect($result)->toEqual(false);
 
-        $result = BCS::create(1.2, ['scale' => 2])->isEqual(1.6);
-        $this->assertEquals(false, $result);
+    $result = BCS::create(1.2, ['scale' => 2])->isLargerThan(1.6);
+    expect($result)->toEqual(false);
 
-        $result = BCS::create(1.6, ['scale' => 2])->isEqual(1.6);
-        $this->assertEquals(true, $result);
-    }
+    $result = BCS::create(1.7, ['scale' => 2])->isLargerThan(1.6);
+    expect($result)->toEqual(true);
+});
+test('sub', function () {
+    $result = BCS::create(1.2, ['scale' => 2])->sub(2.37, 3.84, 8.4)->getResult();
+    expect($result)->toEqual(-13.41);
+});
+test('get sqrt', function () {
+    $result = BCS::create(4, ['scale' => 2])->getSqrt();
+    expect($result)->toEqual(2);
+});
+test('mul', function () {
+    $result = BCS::create(1.2, ['scale' => 2])->mul(2.37, 3.84, 8.4)->getResult();
+    expect($result)->toEqual(91.74);
 
-    public function testIsLargerThan()
-    {
-        $result = BCS::create(1.2, ['scale' => 0])->isLargerThan(1.6);
-        $this->assertEquals(false, $result);
+    $result = BCS::create(1.2, ['scale' => 4, 'floor' => true])->mul(2.37, 3.84, 8.4)->getResult();
+    expect($result)->toEqual(91.7360);
+});
+test('div', function () {
+    $result = BCS::create(1.2, ['scale' => 6])->div(2.37, 3.84, 8.4)->getResult();
+    expect($result)->toEqual(0.015697);
+});
+test('pow', function () {
+    $result = BCS::create(1.2, ['scale' => 2])->pow(2, 2)->getResult();
+    expect($result)->toEqual(2.07);
 
-        $result = BCS::create(1.2, ['scale' => 2])->isLargerThan(1.6);
-        $this->assertEquals(false, $result);
+    // pow 不支持小数乘方，会自动转为整数
+    $result = BCS::create(1.2, ['scale' => 6])->pow(2.37)->getResult();
+    expect($result)->toEqual(1.44);
+});
+test('add', function () {
+    $result = BCS::create(1.2, ['scale' => 2])->add(2.37, 3.84, 8.4)->getResult();
+    expect($result)->toEqual(15.81);
+});
+test('compare', function () {
+    $result = BCS::create(1.2, ['scale' => 0])->compare(1.6);
+    expect($result)->toEqual(0);
 
-        $result = BCS::create(1.7, ['scale' => 2])->isLargerThan(1.6);
-        $this->assertEquals(true, $result);
-    }
+    $result = BCS::create(1.2, ['scale' => 2])->compare(1.6);
+    expect($result)->toEqual(-1);
 
-    public function testSub()
-    {
-        $result = BCS::create(1.2, ['scale' => 2])->sub(2.37, 3.84, 8.4)->getResult();
-        $this->assertEquals(-13.41, $result);
-    }
+    $result = BCS::create(1.2, ['scale' => 2])->compare(1.2);
+    expect($result)->toEqual(0);
+});
+test('mod', function () {
+    $result = BCS::create(10)->mod(5)->getResult();
+    expect($result)->toEqual(0);
 
-    public function testGetSqrt()
-    {
-        $result = BCS::create(4, ['scale' => 2])->getSqrt();
-        $this->assertEquals(2, $result);
-    }
+    $result = BCS::create(12)->mod(10)->getResult();
+    expect($result)->toEqual(2);
+});
+test('is less than', function () {
+    $result = BCS::create(1.2, ['scale' => 0])->isLessThan(1.6);
+    expect($result)->toEqual(false);
 
-    public function testMul()
-    {
-        $result = BCS::create(1.2, ['scale' => 2])->mul(2.37, 3.84, 8.4)->getResult();
-        $this->assertEquals(91.74, $result);
-
-        $result = BCS::create(1.2, ['scale' => 4, 'floor' => true])->mul(2.37, 3.84, 8.4)->getResult();
-        $this->assertEquals(91.7360, $result);
-    }
-
-    public function testDiv()
-    {
-        $result = BCS::create(1.2, ['scale' => 6])->div(2.37, 3.84, 8.4)->getResult();
-        $this->assertEquals(0.015697, $result);
-    }
-
-    public function testPow()
-    {
-        $result = BCS::create(1.2, ['scale' => 2])->pow(2, 2)->getResult();
-        $this->assertEquals(2.07, $result);
-
-        // pow 不支持小数乘方，会自动转为整数
-        $result = BCS::create(1.2, ['scale' => 6])->pow(2.37)->getResult();
-        $this->assertEquals(1.44, $result);
-    }
-
-    public function testAdd()
-    {
-        $result = BCS::create(1.2, ['scale' => 2])->add(2.37, 3.84, 8.4)->getResult();
-        $this->assertEquals(15.81, $result);
-    }
-
-    public function testCompare()
-    {
-        $result = BCS::create(1.2, ['scale' => 0])->compare(1.6);
-        $this->assertEquals(0, $result);
-
-        $result = BCS::create(1.2, ['scale' => 2])->compare(1.6);
-        $this->assertEquals(-1, $result);
-
-        $result = BCS::create(1.2, ['scale' => 2])->compare(1.2);
-        $this->assertEquals(0, $result);
-    }
-
-    public function testMod()
-    {
-        $result = BCS::create(10)->mod(5)->getResult();
-        $this->assertEquals(0, $result);
-
-        $result = BCS::create(12)->mod(10)->getResult();
-        $this->assertEquals(2, $result);
-    }
-
-    public function testIsLessThan()
-    {
-        $result = BCS::create(1.2, ['scale' => 0])->isLessThan(1.6);
-        $this->assertEquals(false, $result);
-
-        $result = BCS::create(1.2, ['scale' => 2])->isLessThan(1.6);
-        $this->assertEquals(true, $result);
-    }
-}
+    $result = BCS::create(1.2, ['scale' => 2])->isLessThan(1.6);
+    expect($result)->toEqual(true);
+});
