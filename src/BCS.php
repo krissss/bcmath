@@ -48,6 +48,7 @@ class BCS extends BaseBC
             throw new \Exception("{$bcName} not in ::bcEnables");
         }
         foreach ($arguments as $number) {
+            $number = number_format($number, $this->config['operateScale']+1, '.', '');
             if ($bcName === 'bcpow') {
                 $number = intval($number);
             }
