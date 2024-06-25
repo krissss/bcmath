@@ -1,7 +1,7 @@
 <?php
 
-
 use kriss\bcmath\BCParser;
+
 test('parse', function () {
     // 正常
     $result = BCParser::create(['scale' => 2])->parse('1.2*1.3+5');

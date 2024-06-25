@@ -9,6 +9,7 @@ namespace kriss\bcmath;
  * @method float|string div(...$numbers)
  * @method float|string mod(...$numbers)
  * @method float|string pow(...$numbers)
+ * @method int compare($number1, $number2)
  */
 class BC extends BaseBC
 {
@@ -24,8 +25,12 @@ class BC extends BaseBC
         }
         $bcs = BCS::create($arguments[0], $this->config);
         unset($arguments[0]);
-        /** @var BCS $bcs */
         $bcs = $bcs->$name(...$arguments);
+        if ($name === 'compare') {
+            /** @var int $bcs */
+            return $bcs;
+        }
+        /** @var BCS $bcs */
         return $bcs->getResult();
     }
 }

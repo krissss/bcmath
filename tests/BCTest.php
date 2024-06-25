@@ -1,7 +1,7 @@
 <?php
 
-
 use kriss\bcmath\BC;
+
 test('add', function () {
     $result = BC::create(['scale' => 2])->add(1.2, 1.3);
     expect($result)->toEqual(2.5);
@@ -32,5 +32,17 @@ test('mul', function () {
 });
 test('no value', function () {
     $result = BC::create(['scale' => 6])->add();
+    expect($result)->toEqual(0);
+});
+test('compare', function () {
+    $result = BC::create(['scale' => 6])->compare(1, 2);
+    expect($result)->toEqual(-1);
+    $result = BC::create(['scale' => 6])->compare(1, 1);
+    expect($result)->toEqual(0);
+    $result = BC::create(['scale' => 6])->compare(2, 1);
+    expect($result)->toEqual(1);
+    $result = BC::create(['scale' => 6])->compare(2, 1);
+    expect($result)->toEqual(1);
+    $result = BC::create(['scale' => 2])->compare(1000.00008, 1000);
     expect($result)->toEqual(0);
 });
