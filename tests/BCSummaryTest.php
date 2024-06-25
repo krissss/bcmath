@@ -1,7 +1,7 @@
 <?php
 
-
 use kriss\bcmath\BCSummary;
+
 test('average', function () {
     // 小数
     $result = BCSummary::create(['scale' => 3])->average(18.8, [2.2, 2.2, 4.4]);

@@ -27,8 +27,8 @@ class BCS extends BaseBC
      */
     public function __construct($number, $config = [])
     {
-        $this->result = $number;
         parent::__construct($config);
+        $this->result = $this->numberFormat($number);
     }
 
     /**
@@ -48,7 +48,7 @@ class BCS extends BaseBC
             throw new \Exception("{$bcName} not in ::bcEnables");
         }
         foreach ($arguments as $number) {
-            $number = number_format($number, $this->config['operateScale']+1, '.', '');
+            $number = $this->numberFormat($number);
             if ($bcName === 'bcpow') {
                 $number = intval($number);
             }
@@ -86,7 +86,7 @@ class BCS extends BaseBC
      */
     public function compare($number)
     {
-        return bccomp($this->result, $number, $this->config['scale']);
+        return bccomp($this->result, $this->numberFormat($number), $this->config['scale']);
     }
 
     /**
@@ -117,5 +117,15 @@ class BCS extends BaseBC
     public function isLargerThan($number)
     {
         return $this->compare($number) === 1;
+    }
+
+    /**
+     * 格式化数字
+     * @param $number
+     * @return string
+     */
+    private function numberFormat($number): string
+    {
+        return number_format($number, $this->config['operateScale']+1, '.', '');
     }
 }

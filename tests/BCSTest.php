@@ -1,6 +1,7 @@
 <?php
 
 use kriss\bcmath\BCS;
+
 test('get result', function () {
     // 默认四舍五入
     $result = BCS::create(1.5, ['scale' => 2])->add(1.2)->mul(2)->sub(1.5)->getResult();
