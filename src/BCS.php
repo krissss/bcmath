@@ -126,6 +126,9 @@ class BCS extends BaseBC
      */
     private function numberFormat($number): string
     {
+        if (is_string($number) && strpos($number, 'E') === false && strpos($number, 'e') === false) {
+            return $number;
+        }
         return number_format($number, $this->config['operateScale']+1, '.', '');
     }
 }
