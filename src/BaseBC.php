@@ -7,6 +7,7 @@ abstract class BaseBC
     public $config = [
         'scale' => null, // 精度，为 null 会取 ini 中的配置，否则为 0
         'operateScale' => 18, // 操作过程中的计算精度
+        'operateScaleNumberFormat' => 15, // 操作过程中的 number_format 的精度，超过15位会存在精度丢失
         'round' => false, // 是否四舍五入，当向上和舍位都为 false 时，默认为四舍五入
         'ceil' => false, // 是否向上取数，当有小数位时精度末位向上取
         'floor' => false, // 是否舍位，当有小数位时舍去精度之后的

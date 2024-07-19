@@ -122,13 +122,20 @@ class BCS extends BaseBC
     /**
      * 格式化数字
      * @param $number
-     * @return string
+     * @return string|float|int
      */
-    private function numberFormat($number): string
+    private function numberFormat($number)
     {
-        if (is_string($number) && strpos($number, 'E') === false && strpos($number, 'e') === false) {
-            return $number;
+        if (is_float($number)) {
+            // 将 float 转为 string，科学计数法可以正常变成 8.0E-6
+            $number = (string)$number;
         }
-        return number_format($number, $this->config['operateScale']+1, '.', '');
+        if (
+            is_string($number)
+            && (strpos($number, 'E') !== false || strpos($number, 'e') !== false) // 科学计数法
+        ) {
+            return number_format($number, $this->config['operateScaleNumberFormat'], '.', '');
+        }
+        return $number;
     }
 }
