@@ -23,7 +23,7 @@
     "ext-bcmath": "*"
   },
   "require-dev": {
-    "pestphp/pest": "^1.23||^2.34"
+    "pestphp/pest": "^1.23||^2.34||^3.7"
   },
   "config": {
     "allow-plugins": {
