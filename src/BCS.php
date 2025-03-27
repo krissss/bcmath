@@ -126,6 +126,10 @@ class BCS extends BaseBC
      */
     private function numberFormat($number)
     {
+        if (is_null($number)) {
+            // null直接返回 0
+            return '0';
+        }
         if (is_float($number)) {
             // 将 float 转为 string，科学计数法可以正常变成 8.0E-6
             $number = (string)$number;
