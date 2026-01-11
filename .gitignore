@@ -13,3 +13,4 @@ Thumbs.db
 .php_cs.cache
 
 composer.lock
+.claude/*.local*
