@@ -3,22 +3,27 @@
 namespace kriss\bcmath;
 
 /**
- * @method float|string add(...$numbers)
- * @method float|string sub(...$numbers)
- * @method float|string mul(...$numbers)
- * @method float|string div(...$numbers)
- * @method float|string mod(...$numbers)
- * @method float|string pow(...$numbers)
- * @method int compare($number1, $number2)
+ * @method float|string add(float|string|int|null ...$numbers)
+ * @method float|string sub(float|string|int|null ...$numbers)
+ * @method float|string mul(float|string|int|null ...$numbers)
+ * @method float|string div(float|string|int|null ...$numbers)
+ * @method float|string mod(float|string|int|null ...$numbers)
+ * @method float|string pow(float|string|int|null ...$numbers)
+ * @method int compare(float|string|int|null $number1, float|string|int|null $number2)
  */
 class BC extends BaseBC
 {
-    public static function create($config = [])
+    public static function create(array $config = []): static
     {
         return new static($config);
     }
 
-    public function __call($name, $arguments)
+    /**
+     * @param string $name
+     * @param array $arguments
+     * @return float|string|int|BCS
+     */
+    public function __call(string $name, array $arguments): float|string|int|BCS
     {
         if (!isset($arguments[0])) {
             return 0;

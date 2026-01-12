@@ -3,54 +3,55 @@
 namespace kriss\bcmath;
 
 /**
- * @method BCS add(...$numbers)
- * @method BCS sub(...$numbers)
- * @method BCS mul(...$numbers)
- * @method BCS div(...$numbers)
- * @method BCS mod(...$numbers)
- * @method BCS pow(...$numbers) 只支持指数为整数的，若传入小数会自动 intval
+ * @method BCS add(float|string|int|null ...$numbers)
+ * @method BCS sub(float|string|int|null ...$numbers)
+ * @method BCS mul(float|string|int|null ...$numbers)
+ * @method BCS div(float|string|int|null ...$numbers)
+ * @method BCS mod(float|string|int|null ...$numbers)
+ * @method BCS pow(float|string|int|null ...$numbers) 只支持指数为整数的，若传入小数会自动 intval
  */
 class BCS extends BaseBC
 {
     /**
      * 允许使用的bc函数
-     * @var array
+     * @var array<string>
      */
-    public $bcEnables = ['bcadd', 'bcsub', 'bcmul', 'bcdiv', 'bcmod', 'bcpow'];
+    public array $bcEnables = ['bcadd', 'bcsub', 'bcmul', 'bcdiv', 'bcmod', 'bcpow'];
+
     /**
      * @var string|float
      */
-    public $result;
+    public string|float $result;
 
     /**
      * {@inheritdoc}
      */
-    public function __construct($number, $config = [])
+    public function __construct(float|string|int|null $number, array $config = [])
     {
         parent::__construct($config);
         $this->result = $this->numberFormat($number);
     }
 
     /**
-     * @param $number
-     * @param $config
+     * @param float|string|int|null $number
+     * @param array $config
      * @return BCS
      */
-    public static function create($number, $config = [])
+    public static function create(float|string|int|null $number, array $config = []): BCS
     {
         return new static($number, $config);
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): BCS
     {
         $bcName = 'bc' . $name;
-        if (!in_array($bcName, $this->bcEnables)) {
+        if (!in_array($bcName, $this->bcEnables, true)) {
             throw new \Exception("{$bcName} not in ::bcEnables");
         }
         foreach ($arguments as $number) {
             $number = $this->numberFormat($number);
             if ($bcName === 'bcpow') {
-                $number = intval($number);
+                $number = (string)intval($number);
             }
             if ($bcName === 'bcmod') {
                 $this->result = call_user_func($bcName, $this->result, $number);
@@ -65,7 +66,7 @@ class BCS extends BaseBC
      * 获取结果
      * @return float|string
      */
-    public function getResult()
+    public function getResult(): float|string
     {
         return $this->getScaleNumber($this->result);
     }
@@ -74,59 +75,59 @@ class BCS extends BaseBC
      * 获取平方根
      * @return string
      */
-    public function getSqrt()
+    public function getSqrt(): string
     {
-        return bcsqrt($this->result, $this->config['scale']);
+        return bcsqrt((string)$this->result, $this->config['scale']);
     }
 
     /**
      * 比较结果
-     * @param $number
+     * @param float|string|int|null $number
      * @return int
      */
-    public function compare($number)
+    public function compare(float|string|int|null $number): int
     {
-        return bccomp($this->result, $this->numberFormat($number), $this->config['scale']);
+        return bccomp((string)$this->result, $this->numberFormat($number), $this->config['scale']);
     }
 
     /**
      * 是否相等
-     * @param $number
+     * @param float|string|int|null $number
      * @return bool
      */
-    public function isEqual($number)
+    public function isEqual(float|string|int|null $number): bool
     {
         return $this->compare($number) === 0;
     }
 
     /**
      * 是否小于
-     * @param $number
+     * @param float|string|int|null $number
      * @return bool
      */
-    public function isLessThan($number)
+    public function isLessThan(float|string|int|null $number): bool
     {
         return $this->compare($number) === -1;
     }
 
     /**
      * 是否大于
-     * @param $number
+     * @param float|string|int|null $number
      * @return bool
      */
-    public function isLargerThan($number)
+    public function isLargerThan(float|string|int|null $number): bool
     {
         return $this->compare($number) === 1;
     }
 
     /**
      * 格式化数字
-     * @param $number
+     * @param float|string|int|null $number
      * @return string|float|int
      */
-    private function numberFormat($number)
+    private function numberFormat(float|string|int|null $number): string|float|int
     {
-        if (is_null($number)) {
+        if ($number === null) {
             // null直接返回 0
             return '0';
         }
@@ -134,10 +135,7 @@ class BCS extends BaseBC
             // 将 float 转为 string，科学计数法可以正常变成 8.0E-6
             $number = (string)$number;
         }
-        if (
-            is_string($number)
-            && (strpos($number, 'E') !== false || strpos($number, 'e') !== false) // 科学计数法
-        ) {
+        if (is_string($number) && (str_contains($number, 'E') || str_contains($number, 'e'))) { // 科学计数法
             return number_format($number, $this->config['operateScaleNumberFormat'], '.', '');
         }
         return $number;

@@ -4,7 +4,19 @@ namespace kriss\bcmath;
 
 abstract class BaseBC
 {
-    public $config = [
+    /**
+     * 配置数组
+     *
+     * @var array{
+     *     scale: int|null,
+     *     operateScale: int,
+     *     operateScaleNumberFormat: int,
+     *     round: bool,
+     *     ceil: bool,
+     *     floor: bool
+     * }
+     */
+    public array $config = [
         'scale' => null, // 精度，为 null 会取 ini 中的配置，否则为 0
         'operateScale' => 18, // 操作过程中的计算精度
         'operateScaleNumberFormat' => 15, // 操作过程中的 number_format 的精度，超过15位会存在精度丢失
@@ -13,24 +25,24 @@ abstract class BaseBC
         'floor' => false, // 是否舍位，当有小数位时舍去精度之后的
     ];
 
-    public function __construct($config = [])
+    public function __construct(array $config = [])
     {
         $this->config = array_merge($this->config, $config);
 
         if (!$this->config['ceil'] && !$this->config['floor']) {
             $this->config['round'] = true;
         }
-        if (is_null($this->config['scale'])) {
+        if ($this->config['scale'] === null) {
             $this->config['scale'] = intval(ini_get('bcmath.scale')) ?: 0;
         }
     }
 
     /**
      * 获取对应精度的数值
-     * @param $number
+     * @param float|string $number
      * @return float|string
      */
-    public function getScaleNumber($number)
+    public function getScaleNumber(float|string $number): float|string
     {
         $scale = $this->config['scale'];
         $operateScale = $this->config['operateScale'];
@@ -48,30 +60,30 @@ abstract class BaseBC
             }
             $decimal = $arr[1];
 
-            $decimalUsed = 0; // 需要使用的小数值
+            $decimalUsed = '0'; // 需要使用的小数值
             $decimalLeft = $decimal; // 截断后剩余的小数值
             if ($scale > 0) {
                 $decimalUsed = substr($decimal, 0, $scale);
                 $decimalLeft = substr($decimal, $scale);
             }
 
-            if (bccomp($decimalUsed, 0, $operateScale) === 0 && bccomp($decimalLeft, 0, $operateScale) === 0) {
+            if (bccomp($decimalUsed, '0', $operateScale) === 0 && bccomp($decimalLeft, '0', $operateScale) === 0) {
                 // 小数位数值均为 0 时
                 return $integer;
             }
 
             $result = $integer;
-            if (bccomp($decimalUsed, 0, $operateScale) === 1) {
+            if (bccomp($decimalUsed, '0', $operateScale) === 1) {
                 $result = $integer . '.' . $decimalUsed;
             }
 
-            if ($this->config['floor'] || bccomp($decimalLeft, 0, $operateScale) === 0) {
+            if ($this->config['floor'] || bccomp($decimalLeft, '0', $operateScale) === 0) {
                 // 舍位 或 位数恰好
                 return $result;
             }
 
             // 需要进位
-            return bcadd($result, bcpow(0.1, $scale, $operateScale), $scale);
+            return bcadd($result, bcpow('0.1', (string)$scale, $operateScale), $scale);
         }
 
         return $number;
