@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-01-12
+
+### Changed
+- **Breaking**: 最低 PHP 版本要求升级至 8.2（原 7.3||^8.0）
+- 添加完整的 PHP 类型声明和 PHPDoc 注解
+
+### Fixed
+- 修复 average() 方法在负数场景下的精度分配问题
+- ceil 模式：从前往后分配，确保不超过剩余总数
+- floor 和 round 模式：差额给最后一个元素
+
+### Added
+- 支持 PHP 8.5 测试
+
+### Docs
+- 添加 CLAUDE.md 项目指南
+- 添加 CHANGELOG.md
+
 ## [2.5.4] - 2025-03-27
 
 ### Added
@@ -78,3 +96,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - 初始版本发布
+
+[3.0.0]: https://github.com/krissss/bcmath/compare/v2.5.4...v3.0.0
+[2.5.4]: https://github.com/krissss/bcmath/compare/v2.5.3...v2.5.4
+[2.5.3]: https://github.com/krissss/bcmath/compare/v2.5.2...v2.5.3
+[2.5.2]: https://github.com/krissss/bcmath/compare/v2.5.1...v2.5.2
+[2.5.1]: https://github.com/krissss/bcmath/compare/v2.5.0...v2.5.1
+[2.5.0]: https://github.com/krissss/bcmath/compare/v2.4.0...v2.5.0
+[2.4.0]: https://github.com/krissss/bcmath/compare/v2.3...v2.4.0
+[2.3]: https://github.com/krissss/bcmath/compare/v2.2...v2.3
+[2.2]: https://github.com/krissss/bcmath/compare/v2.1...v2.2
+[2.1]: https://github.com/krissss/bcmath/compare/v2.0...v2.1
+[2.0]: https://github.com/krissss/bcmath/compare/v1.1...v2.0
+[1.1]: https://github.com/krissss/bcmath/compare/v1.0...v1.1
+[1.0]: https://github.com/krissss/bcmath/releases/tag/v1.0
