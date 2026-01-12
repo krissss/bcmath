@@ -2,6 +2,45 @@
 
 use kriss\bcmath\BC;
 use kriss\bcmath\BCS;
+use kriss\bcmath\BCSummary;
+
+test('issue-1', function () {
+    $result = BCSummary::create(['scale' => 0])->average(1, ['A' => 1, 'B' => 1, 'C' => 1]);
+    expect($result)->toEqual(['A' => 0, 'B' => 0, 'C' => 1]);
+
+    $result = BCSummary::create(['scale' => 0, 'ceil' => true])->average(1, ['A' => 1, 'B' => 1, 'C' => 1]);
+    expect($result)->toEqual(['A' => 1, 'B' => 0, 'C' => 0]);
+
+    $result = BCSummary::create(['scale' => 0])->average(2, ['A' => 1, 'B' => 1, 'C' => 1]);
+    expect($result)->toEqual(['A' => 1, 'B' => 1, 'C' => 0]);
+
+    $result = BCSummary::create(['scale' => 0, 'floor' => true])->average(2, ['A' => 1, 'B' => 1, 'C' => 1]);
+    expect($result)->toEqual(['A' => 0, 'B' => 0, 'C' => 2]);
+
+    $result = BCSummary::create(['scale' => 0])->average(3, ['A' => 1, 'B' => 1, 'C' => 1]);
+    expect($result)->toEqual(['A' => 1, 'B' => 1, 'C' => 1]);
+
+    $result = BCSummary::create(['scale' => 0])->average(4, ['A' => 1, 'B' => 1, 'C' => 1]);
+    expect($result)->toEqual(['A' => 1, 'B' => 1, 'C' => 2]);
+
+    $result = BCSummary::create(['scale' => 0])->average(4, ['A' => 1, 'B' => 2, 'C' => 1]);
+    expect($result)->toEqual(['A' => 1, 'B' => 2, 'C' => 1]);
+
+    $result = BCSummary::create(['scale' => 0])->average(5, ['A' => 1, 'B' => 2, 'C' => 1]);
+    expect($result)->toEqual(['A' => 1, 'B' => 3, 'C' => 1]);
+
+    $result = BCSummary::create(['scale' => 0])->average(-1, ['A' => 1, 'B' => 1, 'C' => 1]);
+    expect($result)->toEqual(['A' => 0, 'B' => 0, 'C' => -1]);
+
+    $result = BCSummary::create(['scale' => 0])->average(-2, ['A' => 1, 'B' => 1, 'C' => 1]);
+    expect($result)->toEqual(['A' => -1, 'B' => -1, 'C' => 0]);
+
+    $result = BCSummary::create(['scale' => 0])->average(-3, ['A' => 1, 'B' => 1, 'C' => 1]);
+    expect($result)->toEqual(['A' => -1, 'B' => -1, 'C' => -1]);
+
+    $result = BCSummary::create(['scale' => 0])->average(-4, ['A' => 1, 'B' => 1, 'C' => 1]);
+    expect($result)->toEqual(['A' => -1, 'B' => -1, 'C' => -2]);
+});
 
 test('issue-2', function () {
     $total = BCS::create(0, ['scale' => 6]);
