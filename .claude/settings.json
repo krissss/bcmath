@@ -1,0 +1,9 @@
+{
+  "language": "chinese",
+  "permissions": {
+    "allow": [
+      "Read",
+      "Edit(/**)"
+    ]
+  }
+}

@@ -1,16 +1,11 @@
 /vendor
-
 composer.phar
-
 phpunit.phar
 .phpunit.result.cache
-
 .DS_Store
 Thumbs.db
 /.idea
 /.vscode
-
 .php_cs.cache
-
 composer.lock
 .claude/*.local*

@@ -1,4 +1,4 @@
-name: test
+name: ci
 
 on:
   push:
@@ -10,11 +10,11 @@ on:
       - reopened
 
 jobs:
-  phpunit:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: [7.3, 7.4, 8.0, 8.1, 8.2, 8.3, 8.4]
+        php-version: ['8.2', '8.3', '8.4', '8.5']
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -22,23 +22,21 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
-          coverage: xdebug
-          #extensions: 'redis'
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+          tools: composer:v2
 
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache dependencies
+      - name: Cache Composer dependencies
         uses: actions/cache@v3
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: php${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
-          restore-keys: php${{ matrix.php }}-composer-
+          path: vendor/
+          key: ${{ runner.os }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ matrix.php-version }}-
+            ${{ runner.os }}-php-
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
+        run: composer install --prefer-dist --no-progress --no-suggest
 
-      - name: Run test
+      - name: Run tests
         run: composer test

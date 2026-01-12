@@ -14,20 +14,22 @@ composer test
 # 或直接运行
 pest
 
+# 运行测试并生成覆盖率报告
+composer test-coverage
+
 # 运行特定测试文件
 pest tests/BCSTest.php
 
 # 运行特定测试用例
 pest --filter testAdd
-
-# 修复代码风格
-composer fix
-# 或直接运行
-php-cs-fixer fix --config .php_cs
-
-# 检查代码风格（干运行）
-php-cs-fixer fix --config .php_cs --dry-run --diff
 ```
+
+## 测试
+
+项目使用 [Pest](https://pestphp.com/) 测试框架：
+- 测试文件位于 `tests/` 目录
+- 运行 `composer test` 或 `pest` 执行所有测试
+- 测试覆盖了 BC、BCS、BCParser 和 BCSummary 的所有功能
 
 ## 架构设计
 
@@ -91,8 +93,9 @@ $result = BCParser::create(['scale' => 4])->parse('5*3+3.5-1.8/7');
 ### 精度系统
 
 库使用**双精度系统**：
-- `scale`：最终结果精度
-- `operateScale`：中间计算精度（默认：2）
+- `scale`：最终结果精度（默认从 `bcmath.scale` ini 配置获取，为 0）
+- `operateScale`：中间计算精度（默认：18）
+- `operateScaleNumberFormat`：number_format 的精度（默认：15，超过会存在精度丢失）
 
 这确保多步计算期间的准确性，同时控制最终输出格式。
 
@@ -111,42 +114,59 @@ $result = BCParser::create(['scale' => 4])->parse('5*3+3.5-1.8/7');
 
 ### PHP 版本支持
 
-- 支持 PHP 7.3+ 和 8.0+（包括 8.4）
+- 支持 PHP 8.2+（包括 8.4）
 - 需要 BCMath 扩展
-
-## 测试
-
-测试按类组织：
-- `BCTest.php`：BC 基础操作
-- `BCSTest.php`：链式操作、精度处理、舍入模式
-- `BCParserTest.php`：各种运算符的表达式解析
-- `BCSummaryTest.php`：统计计算
-- `IssueTest.php`：已报告问题的回归测试
-
-**注意**：项目使用 Pest 而非 PHPUnit。Pest 是一个基于 PHPUnit 构建的测试框架，具有更简洁的语法。
-
-## 代码风格
-
-项目使用 PHP-CS-Fixer，基于 PSR-2 规则加上自定义配置：
-- 短数组语法 `[]`
-- 有序的 import
-- 删除未使用的 import
-- 小写的静态引用（`self`、`static`、`parent`）
-- 原生函数大小写
-
-配置文件：`.php_cs`
 
 ## 常见模式
 
-添加新的 BCMath 操作时：
+### 添加新的 BCMath 操作
+
 1. 同时添加到 `BC` 和 `BCS` 类
 2. 在 `BC` 中：使用 `__call()` 自动委托
 3. 在 `BCS` 中：实现返回 `$this` 以支持链式调用的方法
-4. 在 `BCTest.php` 和 `BCSTest.php` 中添加测试
-5. 考虑精度处理和 null 值转换
+4. 考虑精度处理和 null 值转换
+5. 添加对应的测试用例到 `tests/` 目录
+6. 运行 `composer test` 确保测试通过
 
-修复精度相关问题时：
+### 修复精度相关问题时
+
 - 检查 `scale` 和 `operateScale` 设置
 - 验证舍入模式行为（round、ceil、floor）
 - 测试科学计数法边界情况
 - 确保 null 值得到处理
+
+## 项目结构
+
+```
+.
+├── src/                    # 源代码目录
+│   ├── BaseBC.php         # 抽象基类
+│   ├── BC.php             # 静态便捷方法
+│   ├── BCS.php            # 链式操作
+│   ├── BCParser.php       # 表达式解析器
+│   └── BCSummary.php      # 统计计算
+├── tests/                  # 测试目录
+│   ├── BCTest.php
+│   ├── BCSTest.php
+│   ├── BCParserTest.php
+│   ├── BCSummaryTest.php
+│   ├── IssueTest.php      # Issue 相关测试
+│   └── Pest.php           # Pest 配置
+├── composer.json          # Composer 配置
+├── phpunit.xml            # PHPUnit/Pest 配置
+├── CLAUDE.md              # 本文件
+└── README.md              # 项目说明
+```
+
+## 发布流程
+
+1. 更新版本号（在 `composer.json` 中）
+2. 更新 `CHANGELOG.md`（如果存在）
+3. 创建 git tag
+4. 推送到 GitHub
+5. Composer Packagist 会自动同步新版本
+
+## 相关链接
+
+- [BCMath 扩展文档](https://www.php.net/manual/zh/book.bc.php)
+- [Pest 测试框架](https://pestphp.com/)
